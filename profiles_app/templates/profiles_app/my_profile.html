@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %} My Profile {% endblock title %}
+
+{% block content %} 
+  <h2>{{profile.user.username}}'s Profile</h2><hr>
+
+  <!-- Profile Modal Class Begins -->
+  <div class="ui modal mymodal" id="ui-modal">
+    <i class="close icon"></i>
+    <div class="header">Update Your Profile</div>
+    <div class="image content">
+      <div class="ui medium image">
+        <img src="{{profile.image}}">
+      </div>
+      <div class="description">
+        <div class="ui header">Please fill in the Fields.</div>
+        <form action="" method="POST" enctype="multipart/form-data" class="ui form"> {% csrf_token %}
+            <input class="prompt" type="text" placeholder="First Name" name="first_name" value="{{profile.first_name}}"> <br> <br>
+            <input class="prompt" type="text" placeholder="Last Name" name="last_name" value="{{profile.last_name}}"> <br> <br>
+            <input class="prompt" type="text" placeholder="Bio" name="bio" value="{{profile.bio}}"> <br> <br>
+            <input type="file" name="image"> <br><br>
+            <!-- <button type='submit' class="ui primary button">Update Details</button> -->
+      </div>
+    </div>
+    <div class="actions">
+      <button class="ui positive right labeled icon button" type="submit">
+        Update Info
+        <i class="checkmark icon"></i>
+      </button>
+    </form>
+    </div>
+  </div>
+  
+  <!-- UI Segment Profile Begins-->
+  <div class="ui segment">
+    <div class="ui grid">
+      <div class="row">
+
+        <div class="six wide column">
+          <img class="ui medium rounded image" src="{{profile.image}}"><br>
+          <div class="row mt-5">
+            <button class = "ui secondary button" id="modal-btn">Update User Profile</button>
+          </div>
+        </div>
+
+        <div class="ten wide column">
+          <table class="ui table">
+            <tbody>
+              <tr>
+                <td>Username</td>
+                <td>{{profile.user.username}}</td>
+              </tr>
+              <tr>
+                <td>First Name</td>
+                <td>{{profile.first_name}}</td>
+              </tr>
+              <tr>
+                <td>Last Name</td>
+                <td>{{profile.last_name}}</td>
+              </tr>
+              <tr>
+                <td>Profile Bio</td>
+                <td>{{profile.bio}}</td>
+              </tr>
+              <tr>
+                <td>Friends</td>
+                <td>{{profile.get_all_friends_number}}</td>
+              </tr>
+              <tr>
+                <td>Number Of Posts</td>
+                <td>{{profile.get_all_posts_number}}</td>
+              </tr>
+              <tr>
+                <td>Number Of Likes Given</td>
+                <td>{{profile.get_likes_given_number}}</td>
+              </tr>
+              <tr>
+                <td>Number Of Likes Received</td>
+                <td>{{profile.get_likes_received_number}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+      </div>
+    </div><hr>
+    {% if messages %}
+      <div>
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="row ui positive button"> {{message}} </div>
+        {% else %}
+            <div class="row ui negative button"> {{message}} </div>
+        {% endif %}
+      {% endfor %}
+      </div>  
+    {% endif %}
+  </div>
+
+  <!-- UI Segment For Friends -->
+  <div class="ui segment">
+    <h3>All Friends List</h3>
+    <ol>
+      {% for friend in profile.get_all_friends %}
+        <li>{{friend}}</li>
+      {% endfor %}
+    </ol>
+  </div>
+
+{% endblock %}
+
