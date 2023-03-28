@@ -52,4 +52,4 @@ class Like(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user}"
+        return f"{self.user} {self.value} {self.post}"

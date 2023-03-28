@@ -11,10 +11,29 @@
 <div class="ui grid">
     <div class="row">
         <div class="twelve wide column">
-            PosT Here
+            {% for post in posts %}
+                <div class="ui fluid card">
+                    <div class="content">
+                        {{post.content}}
+                    </div>
+                    <div class="content">
+                        <form action="{% url 'posts:like-unlike' %}" method="POST">{% csrf_token %}
+                            <input type="hidden" name="post_id" value="{{post.id}}">
+                            <button type="submit" class="ui primary button">
+                                {% if profile not in post.liked.all %}
+                                    <i class="thumbs up icon"></i>&nbsp;Like
+                                {% else %}
+                                    <i class="thumbs down icon"></i>&nbsp;Unlike
+                                {% endif %}
+                            </button>
+                            &nbsp;{{post.num_likes}}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
         <div class="four wide column">
-            PosT Here
+            <button class="ui primary button">Post Your Mind</button>
         </div>
     </div>
 </div>
