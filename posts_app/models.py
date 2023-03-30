@@ -7,7 +7,7 @@ from django.core.validators import FileExtensionValidator
 class Post(models.Model):
     content = models.TextField()
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="posts")
-    image = models.ImageField(upload_to="posts", blank=True, validators=[FileExtensionValidator(["png", "jpg", "jpeg"])])
+    image = models.ImageField(upload_to="posts", blank=True, null = True)
     liked = models.ManyToManyField(Profile, blank=True, related_name="likes")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -22,6 +22,10 @@ class Post(models.Model):
 
     def num_comments(self):
         return self.comment_set.all().count()
+
+
+    def num_comments_(self):
+        return self.comment_set.all()
         
 
     def num_likes(self):

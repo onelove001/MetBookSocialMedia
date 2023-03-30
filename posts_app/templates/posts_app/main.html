@@ -10,7 +10,7 @@
 
 <div class="ui grid">
     <div class="row">
-        <div class="twelve wide column">
+        <div class="ten wide column">
             {% for post in posts %}
                 <div class="ui fluid card">
                     <div class="content">
@@ -29,11 +29,27 @@
                             &nbsp;{{post.num_likes}}
                         </form>
                     </div>
+                    <div>
+                        <ul>
+                            {% for comment in post.num_comments_ %}
+                                <p>{{comment.body}}</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <form method ="POST" action="" class="ui form"> {% csrf_token %}
+                        <input type="text" placeholder="Make a comment" name="comment"><br>
+                        <input type="hidden" name="post_id" value="{{post.id}}">
+                        <button class="ui button info" type="submit" name="submit_comment">post comment</button>
+                    </form>
                 </div>
             {% endfor %}
         </div>
-        <div class="four wide column">
-            <button class="ui primary button">Post Your Mind</button>
+        <div class="six wide column">
+            <form method ="POST" action="" class="ui form" enctype="multipart/form-data"> {% csrf_token %}
+                <textarea type="text" placeholder="" rows="4" cols="" name="content">Say your mind...</textarea><br>
+                <input type="file" placeholder="" name="image"><br><br>
+                <button class="ui button positive" type="submit" name="submit_post">Upload Post</button>
+            </form>
         </div>
     </div>
 </div>
