@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    UpdatePost
+{% endblock title %}
+
+
+{% block content %}
+<div class="ui segment">
+    <h3> Update Post </h3>
+    <form class="ui form" action="" method="POST"> {%  csrf_token %}
+        <textarea type="text" placeholder="" rows="4" cols="" name="body" value="{{post.content}}">{{post.content}}</textarea><br>
+        <!-- <input type="file" placeholder="" name="image"><br> -->
+        <button class="ui positive button w-full mt-5" type="submit" name="submit_post">Update Post</button>
+    </form>
+</div>
+{% endblock content %}

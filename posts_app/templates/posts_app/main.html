@@ -13,45 +13,100 @@
         <div class="ten wide column">
             {% for post in posts %}
                 <div class="ui fluid card">
+
                     <div class="content">
-                        {{post.content}}
+                        <div class="right floated meta">
+                            <div class="ui grid">
+                                <div class="row">
+                                    {% if request.user == post.user.user %}
+                                        <a href="{% url 'posts:update-post' post.id %}"><button class="ui button bwhite-lg">Update</button></a>
+                                        <a href="{% url 'posts:delete-post' post.pk %}"><button class="ui button bwhite-lg">Delete</button></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <img class="ui avatar image" src="{{post.user.image.url}}">
+                        {{post.user}} - {{post.created|timesince}} ago
                     </div>
+
+                    <div class="ui fluid image">
+                        {% if post.image %}
+                            <img src="{{post.image.url}}" alt="post image">
+                        {% endif %}
+                    </div>
+
                     <div class="content">
-                        <form action="{% url 'posts:like-unlike' %}" method="POST">{% csrf_token %}
-                            <input type="hidden" name="post_id" value="{{post.id}}">
-                            <button type="submit" class="ui primary button">
+                        <p>{{post.content}}</p>
+                        <div class="right floated">
+                            <form action="{% url 'posts:like-unlike' %}" method="POST">{% csrf_token %}
+                                <input type="hidden" name="post_id" value="{{post.id}}">
                                 {% if profile not in post.liked.all %}
-                                    <i class="thumbs up icon"></i>&nbsp;Like
+                                    <button type="submit" class="ui bwhite-sm button"><i class="thumbs up icon"></i></button>
+                                    <span>{{post.num_likes}}</span>
                                 {% else %}
-                                    <i class="thumbs down icon"></i>&nbsp;Unlike
+                                    <button type="submit" class="ui bwhite-sm button"><i class="thumbs down icon"></i></button>
+                                    <span>{{post.num_likes}}</span>
                                 {% endif %}
-                            </button>
-                            &nbsp;{{post.num_likes}}
+                            </form>
+                        </div>
+                        <i class="comment icon"></i>
+                        <span>{{post.num_comments}} comments</span>
+                    </div>
+
+                    <div class="extra-content">
+                        <div class="mb-5">
+
+                        </div>
+                        <button id="cmt_btn" class="ui button mb-5">show / hide comments</button>
+                        <div clas="comment-box">
+                            {% if post.num_comments_ %}
+                                {% for comment in post.num_comments_ %}
+                                    <div class="ui segment mb-5">
+                                        <img class="ui avatar image" src="{{comment.user.image.url}}">
+                                        <span>{{comment.user}}</span>
+                                        <div class="mt-5">{{comment.body}}</div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <form method ="POST" action="" class="ui fluid form"> {% csrf_token %}
+                            <input type="text" placeholder="Make a comment" name="comment"><br>
+                            <input type="hidden" name="post_id" value="{{post.id}}">
+                            <button class="ui primary button mt-5 w-full" type="submit" name="submit_comment">post comment</button>
                         </form>
                     </div>
-                    <div>
-                        <ul>
-                            {% for comment in post.num_comments_ %}
-                                <p>{{comment.body}}</p>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <form method ="POST" action="" class="ui form"> {% csrf_token %}
-                        <input type="text" placeholder="Make a comment" name="comment"><br>
-                        <input type="hidden" name="post_id" value="{{post.id}}">
-                        <button class="ui button info" type="submit" name="submit_comment">post comment</button>
-                    </form>
+
                 </div>
             {% endfor %}
         </div>
+
         <div class="six wide column">
+            <div class="ui segment">
             <form method ="POST" action="" class="ui form" enctype="multipart/form-data"> {% csrf_token %}
                 <textarea type="text" placeholder="" rows="4" cols="" name="content">Say your mind...</textarea><br>
                 <input type="file" placeholder="" name="image"><br><br>
-                <button class="ui button positive" type="submit" name="submit_post">Upload Post</button>
+                <button class="ui positive button w-full mt-5" type="submit" name="submit_post">Upload Post</button>
             </form>
+            </div>
         </div>
     </div>
 </div>
 
 {% endblock content %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        let display = false
+        $("#cmt_btn").click(function(){
+            if (display === false) {
+                $(this).next(".comment-box").show("show")
+                display=true
+            } else {
+                $(this).next(".comment-box").hide("show")
+                display=false
+            }
+        })
+    });
+</script>
+{% endblock scripts %}
