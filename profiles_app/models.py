@@ -2,7 +2,30 @@ from django.db import models
 from django.contrib.auth.models import User
 from .utils import *
 from django.template.defaultfilters import slugify
+from django.db.models import Q
 
+
+class ProfileManager(models.Manager):
+    def get_all_profiles(self, me):
+        profiles = Profile.objects.all().exclude(user=me)
+        return profiles
+
+
+    def all_profiles_available(self, sender):
+        profiles = Profile.objects.all().exclude(user=sender)
+        profile = Profile.objects.get(user = sender)
+        qs = Relationship.objects.filter(Q(sender = profile) | Q(receiver=profile))
+        
+        accepted = set([])
+        for rel in qs:
+            if rel.status == "accepted":
+                accepted.add(rel.receiver)
+                accepted.add(rel.sender)
+        print(accepted)
+
+        available = [profile for profile in profiles if profile not in accepted]
+        print(available)
+        return available
 
 class Profile(models.Model):
     first_name = models.CharField(max_length=250, blank = True)
@@ -15,6 +38,8 @@ class Profile(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     created = models.DateTimeField(auto_now_add = True)
     updated = models.DateTimeField(auto_now = True)
+
+    objects = ProfileManager()
 
 
     def __str__(self):
@@ -69,6 +94,12 @@ class Profile(models.Model):
         super().save(*args, **kwargs)
 
 
+class RelationshipManager(models.Manager):
+    def invitations_received(self, receiver):
+        qs = Relationship.objects.filter(receiver=receiver, status="request")
+        return qs
+
+
 class Relationship(models.Model):
     sender = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="receiver")
@@ -79,6 +110,8 @@ class Relationship(models.Model):
     status = models.CharField(max_length=10, choices=status_choices)
     created = models.DateTimeField(auto_now_add = True)
     updated = models.DateTimeField(auto_now = True)
+
+    objects = RelationshipManager()
 
     class Meta:
         ordering = ["created"]
