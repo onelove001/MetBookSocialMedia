@@ -30,6 +30,10 @@ body {
         margin-bottom: 5px !important;
 }
 
+.w-big{
+    width: 250px !important;
+}
+
 .bwhite-lg{
     background-color:transparent !important;
 }
